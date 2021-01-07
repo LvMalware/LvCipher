@@ -16,7 +16,7 @@
 
 typedef unsigned char byte_t;
 
-byte_t *
-round_function(byte_t *subkey, byte_t *input_block);
+void
+round_function(byte_t *, byte_t *, byte_t *);
 
 #endif /*_HASH_H*/

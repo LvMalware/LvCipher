@@ -36,59 +36,50 @@ str_xor(byte_t *half_block, byte_t *subkey)
         half_block[i] ^= subkey[i];
 }
 
-byte_t *
+void
 encrypt_block(byte_t *block, byte_t **subkeys, int rounds)
 {
-    byte_t *result = calloc(BLOCK_SIZE + 1, sizeof(byte_t));
-    memcpy(result, block, BLOCK_SIZE);
-    result[BLOCK_SIZE] = '\0';
-    
     byte_t *L, *R, *A;
-    L = &result[0];
-    R = &result[KEY_LENGTH];
+    byte_t hash[KEY_LENGTH];
+    L = &block[0];
+    R = &block[KEY_LENGTH];
 
     int i;
     for (i = 0; i < rounds; i ++)
     {
-        byte_t *block = round_function(subkeys[i], L);
-        str_xor(R, block);
-        free(block);
+        round_function(hash, subkeys[i], L);
+        str_xor(R, hash);
         A = R;
         R = L;
         L = A;
     }
-    return result;
 }
 
-byte_t *
+void
 decrypt_block(byte_t *block, byte_t **subkeys, int rounds)
 {
-    byte_t *result = calloc(BLOCK_SIZE + 1, sizeof(byte_t));
-    memcpy(result, block, BLOCK_SIZE);
-    result[BLOCK_SIZE] = '\0';
     byte_t *L, *R, *A;
-    L = &result[0];
-    R = &result[KEY_LENGTH];
+    byte_t hash[KEY_LENGTH];
+    L = &block[0];
+    R = &block[KEY_LENGTH];
     int i;
+
     for (i = rounds - 1; i >= 0; i --)
     {
-        byte_t *block;
         if (rounds % 2)
         {
-            block = round_function(subkeys[i], L);
-            str_xor(R, block);
+            round_function(hash, subkeys[i], L);
+            str_xor(R, hash);
         }
         else
         {
-            block = round_function(subkeys[i], R);
-            str_xor(L, block);
+            round_function(hash, subkeys[i], R);
+            str_xor(L, hash);
         }
-        free(block);
         A = R;
         R = L;
         L = A;
     }
-    return result;
 }
 
 int

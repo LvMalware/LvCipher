@@ -23,10 +23,10 @@
 
 typedef unsigned char byte_t;
 
-byte_t *
+void
 encrypt_block(byte_t *, byte_t **, int);
 
-byte_t *
+void
 decrypt_block(byte_t *, byte_t **, int);
 
 byte_t **

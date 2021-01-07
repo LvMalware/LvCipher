@@ -97,9 +97,9 @@ encrypt_file(byte_t **subkeys, int rounds, char *filename, char *outfilename)
     {
         if (length < BLOCK_SIZE)
             memset(&block[length], BLOCK_SIZE - length, BLOCK_SIZE - length);
-        byte_t *enc_block = encrypt_block(block, subkeys, rounds);
-        fwrite(enc_block, sizeof(byte_t), BLOCK_SIZE, output);
-        free(enc_block);
+        encrypt_block(block, subkeys, rounds);
+        fwrite(block, sizeof(byte_t), BLOCK_SIZE, output);
+        
     }
     fclose(input);
     fclose(output);
@@ -142,10 +142,9 @@ decrypt_file(byte_t **subkeys, int rounds, char *filename, char *outfilename)
     int length;
     while (length = fread(block, sizeof(byte_t), BLOCK_SIZE, input))
     {
-        byte_t *dec_block = decrypt_block(block, subkeys, rounds);
-        int pad = unpad(dec_block);
-        fwrite(dec_block, sizeof(byte_t), BLOCK_SIZE - pad, output);
-        free(dec_block);
+        decrypt_block(block, subkeys, rounds);
+        int pad = unpad(block);
+        fwrite(block, sizeof(byte_t), BLOCK_SIZE - pad, output);
     }
     fclose(input);
     fclose(output);
