@@ -96,10 +96,17 @@ encrypt_file(byte_t **subkeys, int rounds, char *filename, char *outfilename)
     while (length = fread(block, sizeof(byte_t), BLOCK_SIZE, input))
     {
         if (length < BLOCK_SIZE)
-            memset(&block[length], BLOCK_SIZE - length, BLOCK_SIZE - length);
+        {
+            if (feof(input))
+                memset(&block[length], BLOCK_SIZE - length, BLOCK_SIZE - length);
+            else
+            {
+                fprintf(stderr, "%s error: while reading input file\n", __func__);
+                exit(-1);
+            }
+        }
         encrypt_block(block, subkeys, rounds);
         fwrite(block, sizeof(byte_t), BLOCK_SIZE, output);
-        
     }
     fclose(input);
     fclose(output);
@@ -143,7 +150,10 @@ decrypt_file(byte_t **subkeys, int rounds, char *filename, char *outfilename)
     while (length = fread(block, sizeof(byte_t), BLOCK_SIZE, input))
     {
         decrypt_block(block, subkeys, rounds);
-        int pad = unpad(block);
+
+        int pad = 0;
+        if (feof(input))
+            pad = unpad(block);
         fwrite(block, sizeof(byte_t), BLOCK_SIZE - pad, output);
     }
     fclose(input);

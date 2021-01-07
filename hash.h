@@ -1,7 +1,7 @@
 /*
  * hash.h - header file for the hash function
  *
- * Copyright (C) 2020 Lucas V. Araujo <lucas.vieira.ar@disroot.org> .
+ * Copyright (C) 2021 Lucas V. Araujo <lucas.vieira.ar@disroot.org> .
  *
  * This is free software: you are free to change and redistribute it under the
  * terms of GNU GPL license version 3 or, at your choice, any later version.

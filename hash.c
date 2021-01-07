@@ -1,7 +1,7 @@
 /*
  * hash.c - source for the hash function
  *
- * Copyright (C) 2020 Lucas V. Araujo <lucas.vieira.ar@disroot.org> .
+ * Copyright (C) 2021 Lucas V. Araujo <lucas.vieira.ar@disroot.org> .
  *
  * This is free software: you are free to change and redistribute it under the
  * terms of GNU GPL license version 3 or, at your choice, any later version.
@@ -54,7 +54,7 @@
 void
 round_function(byte_t *hash, byte_t *subkey, byte_t *input_block)
 {
-    int i;
+    int i           = 0;
     uint32_t *block = (uint32_t *) input_block;
     uint32_t *sbkey = (uint32_t *) subkey;
     uint32_t A      = block[0];
