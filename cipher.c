@@ -18,22 +18,11 @@
 #include "hash.h"
 
 void
-hex_print(byte_t *buffer, int size)
+str_xor(byte_t *half_block, byte_t *hash)
 {
-    int i;
-    for (i = 0; i < size; i++)
-    {
-        printf("%02x", buffer[i]);
-    }
-    printf("\n");
-}
-
-void
-str_xor(byte_t *half_block, byte_t *subkey)
-{
-    int i;
+    register int i;
     for (i = 0; i < KEY_LENGTH; i ++)
-        half_block[i] ^= subkey[i];
+        half_block[i] ^= hash[i];
 }
 
 void
@@ -41,10 +30,10 @@ encrypt_block(byte_t *block, byte_t **subkeys, int rounds)
 {
     byte_t *L, *R, *A;
     byte_t hash[KEY_LENGTH];
-    L = &block[0];
+    L = block;
     R = &block[KEY_LENGTH];
 
-    int i;
+    register int i;
     for (i = 0; i < rounds; i ++)
     {
         round_function(hash, subkeys[i], L);
@@ -60,13 +49,13 @@ decrypt_block(byte_t *block, byte_t **subkeys, int rounds)
 {
     byte_t *L, *R, *A;
     byte_t hash[KEY_LENGTH];
-    L = &block[0];
+    L = block;
     R = &block[KEY_LENGTH];
-    int i;
-
+    
+    register int i;
     for (i = rounds - 1; i >= 0; i --)
     {
-        if (rounds % 2)
+        if (rounds & 1)
         {
             round_function(hash, subkeys[i], L);
             str_xor(R, hash);
@@ -118,10 +107,10 @@ expand_key(const byte_t *key, int *rounds)
     {
         for (i = 0; i < total_bytes; i ++)
         {
-            subkeys[i] ^= RL(subkeys[j] + i, h % 0x8);
-            subkeys[j] += RR(subkeys[i] + j, h % 0x8);
-            subkeys[i] ^= RL(subkeys[j] + h, j % 0x8);
-            subkeys[j] += RR(subkeys[i] + h, i % 0x8);
+            subkeys[i] ^= RL(subkeys[j] + i, h & 0x7);
+            subkeys[j] += RR(subkeys[i] + j, h & 0x7);
+            subkeys[i] ^= RL(subkeys[j] + h, j & 0x7);
+            subkeys[j] += RR(subkeys[i] + h, i & 0x7);
         }
         h *= subkeys[j];
         h += subkeys[j];

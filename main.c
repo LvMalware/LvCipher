@@ -1,3 +1,4 @@
+#include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h> 
@@ -229,14 +230,29 @@ main(int argc, char *argv[])
     byte_t **subkeys = expand_key(password, &rounds);
     printf("Destroying original key...\n");
     destroy_key(password);
-    printf("%s with %d rounds..\n", (a ? "Decrypting" : "Encrypting"), rounds);
-        
+    printf("%s with %d rounds...\n", (a ? "Decrypting" : "Encrypting"), rounds);
+    
+    struct timespec start_time;
+    struct timespec final_time;
+    clock_gettime(CLOCK_REALTIME, &start_time);
+    
     if (a == 0)
         encrypt_file(subkeys, rounds, input_file, output_file);
     else
         decrypt_file(subkeys, rounds, input_file, output_file);
+    
+    clock_gettime(CLOCK_REALTIME, &final_time);
+    time_t seconds = final_time.tv_sec - start_time.tv_sec;
+    time_t nanosec = final_time.tv_nsec - start_time.tv_nsec;
+    
     printf("Destroying subkeys...\n");
     destroy_subkeys(subkeys, rounds);
     printf("Done.\n");
+ 
+    if (seconds)
+        printf("It took %lu seconds.\n", seconds);
+    else
+        printf("It took %lu nanoseconds.\n", nanosec);
+ 
     return 0;
 }

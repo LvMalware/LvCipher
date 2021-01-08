@@ -14,10 +14,13 @@
 #ifndef  _CIPHER_H
 #define  _CIPHER_H
 
-#define BLOCK_SIZE 0x20 /* 32 bytes (256 bits) */
-#define MIN_ROUNDS 0x10 /* minimum of 16 rounds */
+/* block size is 32 bytes (256 bits) */
+#define BLOCK_SIZE 0x20
+/* minimum of 16 rounds */
+#define MIN_ROUNDS 0x10
+/* each subkey has BLOCK_SIZE/2 bytes */
 #define KEY_LENGTH BLOCK_SIZE / 2
-
+/* bit-shift rotatio for 8-bit (one byte) numbers */
 #define RL(x, y) (x << y) | (x >> (8 - y))
 #define RR(x, y) (x >> y) | (x << (8 - y))
 
@@ -31,9 +34,6 @@ decrypt_block(byte_t *, byte_t **, int);
 
 byte_t **
 expand_key(const byte_t *, int *);
-
-void
-hex_print(byte_t *buffer, int size);
 
 int
 rounds_from_key(const byte_t * key);
