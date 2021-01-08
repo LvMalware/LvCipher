@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "cipher.h"
-#include "hash.h"
+#include "lib/cipher.h"
+#include "lib/hash.h"
 
 void
 str_xor(byte_t *half_block, byte_t *hash)

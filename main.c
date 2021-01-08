@@ -4,7 +4,7 @@
 #include <unistd.h> 
 #include <string.h>
 #include <termios.h>
-#include "cipher.h"
+#include "lib/cipher.h"
 
 #define PASSWORD_MAX_SIZE 256
 
